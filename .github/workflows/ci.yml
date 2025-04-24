@@ -1,0 +1,47 @@
+name: Zig
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: ['*']
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        targets:
+          - x86_64-linux-gnu
+          - x86_64-linux-musl
+          - x86-linux-gnu
+          - x86-linux-musl
+          - aarch64-linux-gnu
+          - aarch64-linux-musl
+          - riscv64-linux-musl
+          - powerpc64-linux-musl
+          - x86_64-macos
+          - aarch64-macos
+          - x86-windows
+          - x86_64-windows
+          - aarch64-windows
+
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          fetch-depth: 0
+      - uses: mlugg/setup-zig@v1
+      - name: Build Summary ${{ matrix.targets }}
+        run: zig build -Dtests --summary all -freference-trace -Dtarget=${{ matrix.targets }}
+
+  zig-msvc:
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@v4
+      - uses: mlugg/setup-zig@v1
+      - name: Build Summary x86_64-windows-msvc
+        run: zig build --summary all -freference-trace -Dtarget=native-windows-msvc

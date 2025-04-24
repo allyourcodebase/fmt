@@ -1,0 +1,17 @@
+.{
+    .name = .fmt,
+    .version = "0.1.0",
+    .fingerprint = 0x3420ce4f26fee0a1,
+    .dependencies = .{
+        .fmt = .{
+            .url = "https://github.com/fmtlib/fmt/releases/download/11.1.4/fmt-11.1.4.zip",
+            .hash = "N-V-__8AAKD2VgCfm9hxSGtvOt6Ypcvvwh9EPAvMVEZjeLIW",
+        },
+    },
+    .paths = .{
+        "README.md",
+        "LICENSE",
+        "build.zig",
+        "build.zig.zon",
+    },
+}
