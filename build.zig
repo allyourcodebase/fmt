@@ -8,24 +8,22 @@ pub fn build(b: *std.Build) void {
     const shared = b.option(bool, "shared", "Build the Shared Library [default: false]") orelse false;
     const tests = b.option(bool, "tests", "Build tests [default: false]") orelse false;
 
-    const fmt_dep = b.dependency("fmt", .{
-        .target = target,
-        .optimize = optimize,
-    });
+    // zon dependency
+    const fmt_dep = b.dependency("fmt", .{});
 
-    const lib = if (shared) b.addSharedLibrary(.{
+    // build libfmt
+    const lib = b.addLibrary(.{
         .name = "fmt",
-        .target = target,
-        .optimize = optimize,
+        .root_module = b.createModule(.{
+            .target = target,
+            .optimize = optimize,
+        }),
+        .linkage = if (shared) .dynamic else .static,
         .version = .{
             .major = 11,
             .minor = 1,
             .patch = 4,
         },
-    }) else b.addStaticLibrary(.{
-        .name = "fmt",
-        .target = target,
-        .optimize = optimize,
     });
     lib.addIncludePath(fmt_dep.path("include"));
     lib.addCSourceFiles(.{
@@ -38,10 +36,13 @@ pub fn build(b: *std.Build) void {
         lib.root_module.strip = true;
     if (lib.linkage == .static)
         lib.pie = true;
+
+    // MSVC don't build llvm-libc++
     if (lib.rootModuleTarget().abi != .msvc)
         lib.linkLibCpp()
     else
         lib.linkLibC();
+
     lib.installHeadersDirectory(fmt_dep.path("include"), "", .{});
     b.installArtifact(lib);
 
