@@ -32,7 +32,7 @@ jobs:
         with:
           submodules: recursive
           fetch-depth: 0
-      - uses: mlugg/setup-zig@v1
+      - uses: mlugg/setup-zig@v2
       - name: Build Summary ${{ matrix.targets }}
         run: zig build -Dtests --summary all -freference-trace -Dtarget=${{ matrix.targets }}
 
@@ -42,6 +42,6 @@ jobs:
       fail-fast: false
     steps:
       - uses: actions/checkout@v4
-      - uses: mlugg/setup-zig@v1
+      - uses: mlugg/setup-zig@v2
       - name: Build Summary x86_64-windows-msvc
         run: zig build --summary all -freference-trace -Dtarget=native-windows-msvc
